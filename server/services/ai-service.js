@@ -6,16 +6,23 @@ export const generateProductDescription = async (product) => {
   const prompt = `
 You are an expert e-commerce copywriter.
 
+Generate a professional product description using the following information.
+
 Product name: ${name}
 Category: ${category}
 Features: ${features.join(", ")}
 
 Requirements:
 - Write an engaging product description.
-- Use professional marketing language.
-- Do not invent specifications.
+- Use professional and natural marketing language.
+- Use only facts explicitly provided in the product information.
+- Do not invent product quality, materials, performance, certifications, or specifications.
+- Do not use unsupported adjectives such as premium or high-quality.
+- Do not make guarantees or claims that cannot be verified.
+- If information is missing, simply omit it.
 - Keep the description between 80 and 120 words.
-- Return only the description.
+- Avoid repetitive phrases and unnecessary exaggeration.
+- Return only the description without headings or explanations.
 `;
 
   try {
@@ -24,13 +31,16 @@ Requirements:
       contents: prompt,
     });
 
-    if (!response.text) {
+    const description = response.text?.trim();
+
+    if (!description) {
       throw new Error("Gemini returned an empty response");
     }
 
-    return response.text.trim();
+    return description;
   } catch (error) {
     console.error("Gemini API Error:", error.message);
+
     throw new Error("AI service is temporarily unavailable. Please try again.");
   }
 };
