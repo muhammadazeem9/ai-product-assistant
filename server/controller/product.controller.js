@@ -1,4 +1,5 @@
 import { generateDescriptionSchema } from "../validators/product.validator.js";
+import { generateProductDescription } from "../services/ai-service.js";
 
 export const products = (req, res) => {
   res.status(200).json({
@@ -7,27 +8,56 @@ export const products = (req, res) => {
   });
 };
 
-export const generateDescription = (req, res) => {
-  const validation = generateDescriptionSchema.safeParse(req.body);
+// export const generateDescription = (req, res) => {
+//   const validation = generateDescriptionSchema.safeParse(req.body);
 
-  if (!validation.success) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid product information",
-      errors: validation.error.issues.map((issue) => ({
-        field: issue.path.join("."),
-        message: issue.message,
-      })),
+//   if (!validation.success) {
+//     return res.status(400).json({
+//       success: false,
+//       message: "Invalid product information",
+//       errors: validation.error.issues.map((issue) => ({
+//         field: issue.path.join("."),
+//         message: issue.message,
+//       })),
+//     });
+//   }
+
+//   const product = validation.data;
+
+//   return res.status(200).json({
+//     success: true,
+//     message: "Product information received successfully",
+//     data: {
+//       product,
+//     },
+//   });
+// };
+
+export const generateDescription = async (req, res, next) => {
+  try {
+    const validation = generateDescriptionSchema.safeParse(req.body);
+
+    if (!validation.success) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid product information",
+        errors: validation.error.issues.map((issue) => ({
+          field: issue.path.join("."),
+          message: issue.message,
+        })),
+      });
+    }
+
+    const description = await generateProductDescription(validation.data);
+
+    return res.status(200).json({
+      success: true,
+      message: "Product description generated successfully",
+      data: {
+        description,
+      },
     });
+  } catch (error) {
+    next(error);
   }
-
-  const product = validation.data;
-
-  return res.status(200).json({
-    success: true,
-    message: "Product information received successfully",
-    data: {
-      product,
-    },
-  });
 };
