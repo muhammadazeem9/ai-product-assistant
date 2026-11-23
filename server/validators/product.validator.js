@@ -7,3 +7,7 @@ export const generateDescriptionSchema = z.object({
 
   features: z.array(z.string().trim().min(1).max(100)).max(20).default([]),
 });
+
+export const updateProductStatusSchema = z.object({
+  status: z.enum(["approved", "rejected"]),
+});
