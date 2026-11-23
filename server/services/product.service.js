@@ -20,7 +20,7 @@ export const createProductDraft = async (productData) => {
 };
 
 export const updateProductStatus = async (productId, status) => {
-  if (mongoose.isValidObjectId(productId)) {
+  if (!mongoose.isValidObjectId(productId)) {
     throw new appError("Invalid product ID", 400);
   }
 
