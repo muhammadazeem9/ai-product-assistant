@@ -1,6 +1,6 @@
 import { generateDescriptionSchema } from "../validators/product.validator.js";
-import { generateProductDescription } from "../services/ai-service.js";
-
+// import { generateProductDescription } from "../services/ai-service.js";
+import { createProductDraft } from "../services/product.service.js";
 export const products = (req, res) => {
   res.status(200).json({
     status: "success",
@@ -23,13 +23,14 @@ export const generateDescription = async (req, res, next) => {
       });
     }
 
-    const description = await generateProductDescription(validation.data);
+    // 2. Generate description and save product in MongoDB as a draft
+    const product = await createProductDraft(validation.data);
 
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
-      message: "Product description generated successfully",
+      message: "Product created successfully as a draft",
       data: {
-        description,
+        product,
       },
     });
   } catch (error) {
