@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 import appError from "../utils/appError.js";
 
-const generateToken = (user) => {
+const createToken = (user) => {
   if (!process.env.JWT_SECRET) {
     throw new appError(
       "JWT_SECRET is not defined in environment variables",
