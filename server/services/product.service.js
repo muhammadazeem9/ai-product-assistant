@@ -39,3 +39,55 @@ export const updateProductStatus = async (productId, status) => {
 
   return product;
 };
+
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+export const getProducts = async ({
+  page,
+  limit,
+  status,
+  category,
+  search,
+}) => {
+  const filter = {};
+
+  if (status) {
+    filter.status = status;
+  }
+
+  if (category) {
+    filter.category = {
+      $regex: `^${escapeRegex(category)}$`,
+      $options: "i",
+    };
+  }
+
+  if (search) {
+    const searchRegex = {
+      $regex: escapeRegex(search),
+      $options: "i",
+    };
+
+    filter.$or = [{ name: searchRegex }, { category: searchRegex }];
+  }
+
+  const skip = (page - 1) * limit;
+
+  const [products, totalProducts] = await Promise.all([
+    Product.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
+
+    Product.countDocuments(filter),
+  ]);
+
+  return {
+    products,
+    pagination: {
+      currentPage: page,
+      limit,
+      totalProducts,
+      totalPages: Math.ceil(totalProducts / limit),
+      hasNextPage: page * limit < totalProducts,
+      hasPreviousPage: page > 1,
+    },
+  };
+};

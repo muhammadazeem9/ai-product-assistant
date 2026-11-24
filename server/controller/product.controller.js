@@ -1,23 +1,36 @@
 import {
   generateDescriptionSchema,
   updateProductStatusSchema,
+  productQuerySchema,
 } from "../validators/product.validator.js";
-import Product from "../models/product.model.js";
+// import Product from "../models/product.model.js";
 import {
   createProductDraft,
   updateProductStatus,
+  getProducts,
 } from "../services/product.service.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 export const products = asyncHandler(async (req, res) => {
-  const products = await Product.find();
+  const validation = productQuerySchema.safeParse(req.query);
 
-  res.status(200).json({
+  if (!validation.success) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid product query parameters",
+      errors: validation.error.issues.map((issue) => ({
+        field: issue.path.join("."),
+        message: issue.message,
+      })),
+    });
+  }
+
+  const result = await getProducts(validation.data);
+
+  return res.status(200).json({
     success: true,
-    message: "All products retrieved successfully",
-    data: {
-      products,
-    },
+    message: "Products retrieved successfully",
+    data: result,
   });
 });
 
