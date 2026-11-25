@@ -91,3 +91,29 @@ export const getProducts = async ({
     },
   };
 };
+
+export const updateProduct = async (productId, updateData) => {
+  const product = await Product.findById(productId);
+
+  if (!product) {
+    throw new appError("Product not found", 404);
+  }
+
+  // Check whether another product already uses this slug.
+  if (updateData.slug && updateData.slug !== product.slug) {
+    const existingSlug = await Product.findOne({
+      slug: updateData.slug,
+      _id: { $ne: productId },
+    });
+
+    if (existingSlug) {
+      throw new appError("This product slug is already in use", 409);
+    }
+  }
+
+  Object.assign(product, updateData);
+
+  await product.save();
+
+  return product;
+};
