@@ -22,7 +22,66 @@ const productSchema = new mongoose.Schema(
       default: [],
     },
 
+    seoTitle: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    metaDescription: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    slug: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      default: "",
+    },
+
+    primaryKeyword: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    relatedKeywords: {
+      type: [String],
+      default: [],
+    },
+
+    shortDescription: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
     description: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    faqs: {
+      type: [
+        {
+          _id: false,
+          question: {
+            type: String,
+            required: true,
+          },
+          answer: {
+            type: String,
+            required: true,
+          },
+        },
+      ],
+      default: [],
+    },
+
+    imageAltText: {
       type: String,
       trim: true,
       default: "",

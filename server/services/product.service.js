@@ -4,15 +4,15 @@ import { generateProductDescription } from "./ai-service.js";
 import appError from "../utils/appError.js";
 
 export const createProductDraft = async (productData) => {
-  const description = await generateProductDescription(productData);
+  const aiContent = await generateProductDescription(productData);
 
-  if (!description || typeof description !== "string") {
-    throw new appError("Failed to generate product description", 502);
-  }
+  // if (!aiContent || typeof aiContent !== "string") {
+  //   throw new appError("Failed to generate product description", 502);
+  // }
 
   const product = await Product.create({
     ...productData,
-    description,
+    ...aiContent,
     status: "draft",
   });
 
