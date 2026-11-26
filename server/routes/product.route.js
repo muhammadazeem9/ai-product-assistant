@@ -3,6 +3,7 @@ import {
   products,
   generateDescription,
   changeProductStatus,
+  editProduct,
 } from "../controller/product.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 import { restrictTo } from "../middleware/role.milddleware.js";
@@ -17,5 +18,7 @@ router.get("/", products); //get all products
 router.post("/generate-description", aiGenerationLimiter, generateDescription); // generate product description
 
 router.patch("/:id/status", changeProductStatus); // change product status
+
+router.patch("/:id", editProduct);
 
 export default router;

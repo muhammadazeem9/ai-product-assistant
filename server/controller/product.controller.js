@@ -1,15 +1,16 @@
 import {
   generateDescriptionSchema,
   updateProductStatusSchema,
+  updateProductSchema,
   productQuerySchema,
 } from "../validators/product.validator.js";
-// import Product from "../models/product.model.js";
 import {
   createProductDraft,
   updateProductStatus,
   getProducts,
 } from "../services/product.service.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import { updateProduct as updateProductService } from "../services/product.service.js";
 
 export const products = asyncHandler(async (req, res) => {
   const validation = productQuerySchema.safeParse(req.query);
@@ -80,5 +81,29 @@ export const changeProductStatus = asyncHandler(async (req, res) => {
     success: true,
     message: `Product ${product.status} successfully`,
     data: { product },
+  });
+});
+
+export const editProduct = asyncHandler(async (req, res) => {
+  // 1. Validate incoming data
+  const validationResult = updateProductSchema.safeParse(req.body);
+
+  if (!validationResult.success) {
+    throw new AppError("Invalid product update data", 400);
+  }
+
+  // 2. Update product through service layer
+  const product = await updateProductService(
+    req.params.id,
+    validationResult.data,
+  );
+
+  // 3. Return response
+  res.status(200).json({
+    success: true,
+    message: "Product updated successfully",
+    data: {
+      product,
+    },
   });
 });

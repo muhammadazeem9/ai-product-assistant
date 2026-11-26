@@ -22,6 +22,7 @@ const productSchema = new mongoose.Schema(
       default: [],
     },
 
+    // SEO fields must be at the root level.
     seoTitle: {
       type: String,
       trim: true,
@@ -67,7 +68,6 @@ const productSchema = new mongoose.Schema(
     faqs: {
       type: [
         {
-          _id: false,
           question: {
             type: String,
             required: true,
