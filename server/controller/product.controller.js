@@ -8,6 +8,8 @@ import {
   createProductDraft,
   updateProductStatus,
   getProducts,
+  getProductById,
+  deleteProduct,
 } from "../services/product.service.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { updateProduct as updateProductService } from "../services/product.service.js";
@@ -102,6 +104,27 @@ export const editProduct = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     message: "Product updated successfully",
+    data: {
+      product,
+    },
+  });
+});
+
+export const getProduct = asyncHandler(async (req, res) => {
+  const product = await getProductById(req.params.id);
+  res.status(200).json({
+    success: true,
+    message: "Product retreived successfully",
+    data: {
+      product,
+    },
+  });
+});
+export const delProduct = asyncHandler(async (req, res) => {
+  const product = await deleteProduct(req.params.id);
+  res.status(200).json({
+    success: true,
+    message: "Product delete successfully",
     data: {
       product,
     },

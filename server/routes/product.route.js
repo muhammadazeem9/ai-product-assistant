@@ -4,10 +4,13 @@ import {
   generateDescription,
   changeProductStatus,
   editProduct,
+  getProduct,
+  delProduct,
 } from "../controller/product.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 import { restrictTo } from "../middleware/role.milddleware.js";
 import { aiGenerationLimiter } from "../middleware/ratelimit.middleware.js";
+import { validateObjectId } from "../middleware/validateObjectId.middleware.js";
 
 const router = express.Router();
 
@@ -19,6 +22,10 @@ router.post("/generate-description", aiGenerationLimiter, generateDescription); 
 
 router.patch("/:id/status", changeProductStatus); // change product status
 
-router.patch("/:id", editProduct);
+router.patch("/:id", validateObjectId, editProduct);
+
+router.get("/:id", validateObjectId, getProduct);
+
+router.delete("/:id", validateObjectId, delProduct);
 
 export default router;

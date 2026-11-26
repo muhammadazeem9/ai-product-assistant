@@ -117,3 +117,23 @@ export const updateProduct = async (productId, updateData) => {
 
   return product;
 };
+
+export const getProductById = async (productId) => {
+  const product = await Product.findById(productId);
+  if (!product) {
+    throw new appError("product not found", 404);
+  }
+  return product;
+};
+
+export const deleteProduct = async (productId) => {
+  const product = await Product.findById(productId);
+
+  if (!product) {
+    throw new appError("Product not found", 404);
+  }
+
+  await product.deleteOne();
+
+  return product;
+};
